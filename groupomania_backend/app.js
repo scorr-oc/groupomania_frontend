@@ -1,8 +1,21 @@
+// Importation de express
 const express = require('express')
 
+// Importation de la BDD
+const mysql = require('./database/db')
+
+// création de l'application express
 const app= express ()
 
+// Importation des routers
+const userRoutes = require ('./routes/user')
+
+// pour logger une requête
+const morgan = require('morgan')
+
 app.use(express.json())
+
+app.use(morgan("dev"))
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,9 +24,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use((req, res) => {
-  res.json({message: 'votre requête a bien été reçue !'})
-})
-
+// enregistrement des routers pour les relier au front
+app.use('/api/auth',userRoutes)
 
 module.exports = app
