@@ -2,6 +2,9 @@
 const dotenv = require("dotenv");
 dotenv.config()
 
+// Importation du modèle
+const User = require('../models/User')
+
 // Importation de ma BDD
 const mysqlconnection = require ('../database/db')
 
@@ -16,10 +19,7 @@ exports.signup = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
   .then(hash => {
     // données envoyées dans BDD
-    const user = {
-      email: req.body.email,
-      password: hash
-    }
+    const user = new User(req.body.email,hash)
     
     // requête SQL pour envoyer les données dans la BDD
     mysqlconnection.query(
@@ -38,51 +38,48 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => { 
 
-const email = req.body.email
+  const email = req.body.email
 
-// Vérification si l'email récupéré se trouve dans la BDD
-mysqlconnection.query(
-  'SELECT * FROM user WHERE email=?',email,
-  (error, results) => {
-    if(error) {
-      res.json({error})
-    }else {
-      
-      // si l'email n'existe pas
-      if(results == 0) {
-        return res.status(404).json({error: "l'utilisateur n'existe pas !"})
-      }
-
-      // contrôle de la validité du mot de passe
-      const password = results[0].password
-      bcrypt.compare(req.body.password,password)
-      .then(valid => {
-        // si le mot de passe n'est pas correct
-        if(!valid){
-          return res.status(401).json({message: "mot de passe incorrect !"})
+  // Vérification si l'email récupéré se trouve dans la BDD
+  mysqlconnection.query(
+    'SELECT * FROM user WHERE email=?',email,
+    (error, results) => {
+      if(error) {
+        res.json({error})
+      }else {
+        
+        // si l'email n'existe pas
+        if(results == 0) {
+          return res.status(404).json({error: "l'utilisateur n'existe pas !"})
         }
-        // si mdp correct, on envoie l'id de l'utilisateur et un token de connexion
-        const userId = results[0].id
-        
-        // =>Génération du token
-        const token = jwt.sign(
-          {userId : userId},
-          `${process.env.JWT_KEY_TOKEN}`,
-          {expiresIn: "24h"}
-        )
-        
-        res.status(201).json({ 
-          userId: userId,
-          token
-        })
-      }
 
-      )
-      .catch(
-        error => res.status(500).json({error})
-      )
- 
+        // contrôle de la validité du mot de passe
+        const password = results[0].password
+        bcrypt.compare(req.body.password,password)
+        .then(valid => {
+          // si le mot de passe n'est pas correct
+          if(!valid){
+            return res.status(401).json({message: "mot de passe incorrect !"})
+          }
+          // si mdp correct, on envoie l'id de l'utilisateur et un token de connexion
+          const userId = results[0].id
+          
+          // =>Génération du token
+          const token = jwt.sign(
+            {userId : userId},
+            `${process.env.JWT_KEY_TOKEN}`,
+            {expiresIn: "24h"}
+          )
+         
+          res.status(201).json({ 
+            userId: userId,
+            token
+          })
+        })
+        .catch(
+          error => res.status(500).json({error})
+        )
+      }
     }
-  }
-)
+  )
 }

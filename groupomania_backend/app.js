@@ -1,15 +1,15 @@
 // Importation de express
 const express = require('express')
+// création de l'application express
+const app= express ()
+
 
 // Importation de la BDD
 const mysql = require('./database/db')
 
-// création de l'application express
-const app= express ()
-
 // Importation des routers
 const userRoutes = require ('./routes/user')
-
+const postRoutes = require ('./routes/post')
 // pour logger une requête
 const morgan = require('morgan')
 
@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 })
 
 // enregistrement des routers pour les relier au front
-app.use('/api/auth',userRoutes)
+app.use('/auth',userRoutes)
+app.use('/post',postRoutes)
 
 module.exports = app
