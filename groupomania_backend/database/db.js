@@ -10,8 +10,8 @@ const mysql = require('mysql')
 const mysqlconnection = mysql.createConnection({
   host:'localhost',
   database: 'groupomania',
-  user: 'root',
-  password:'Aiguille//29-05'
+  user: `${process.env.USER}`,
+  password:`${process.env.PASSWORD}`
 })
 
 // connexion à la base de données
