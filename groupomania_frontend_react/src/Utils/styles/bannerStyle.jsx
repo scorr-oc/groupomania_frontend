@@ -13,6 +13,7 @@ export const Container = styled.div`
 `
 export const Logo = styled.img`
   width: 30%;
+  background-color: white;
 `
 export const Styledlinked = styled(Link)`
   text-decoration: none;

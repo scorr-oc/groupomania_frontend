@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import logo from '../../assets/logo_svg.svg'
 import { Container } from '../../Utils/styles/bannerStyle'
 import { Logo } from '../../Utils/styles/bannerStyle'

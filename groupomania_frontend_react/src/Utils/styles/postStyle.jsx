@@ -1,33 +1,35 @@
 import styled from 'styled-components'
 import colors from './colors'
 
-export const PageSignup = styled.section`
+export const PagePost = styled.div`
   width: 100%;
-  height: 650px;
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: 10%;
 `
-export const FormSignup = styled.form`
+export const FormPost = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: start;
 `
 
-export const FormInput = styled.input`
+export const InputPost = styled.input`
   margin: 15px 0px 15px 0px;
   width: 700px;
   height: 30px;
   color: ${colors.tertiary};
 `
-export const FormLabel = styled.label`
+export const LabelPost = styled.label`
+  display: flex;
+  justify-content: center;
   color: ${colors.primary};
 `
-export const FormButton = styled.button`
+export const PostButton = styled.button`
   margin-top: 30px;
-  margin-left: 275px;
+  width: 30%;
+
   font-size: 15px;
   color: ${colors.tertiary};
   font-weight: bold;
@@ -36,16 +38,8 @@ export const FormButton = styled.button`
   padding: 20px;
   border: none;
   border-radius: 30px;
-  &:disabled {
-    background-color: #f0f0f0;
-  }
   &:hover {
     cursor: pointer;
     opacity: 1.2;
   }
-`
-export const FormError = styled.div`
-  color: red;
-  font-size: 15px;
-  font-weight: bold;
 `

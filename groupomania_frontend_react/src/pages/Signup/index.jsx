@@ -1,28 +1,42 @@
 import { useState } from 'react'
 
-import { PageSignup } from '../../Utils/styles/connexionStyle'
-import { FormSignup } from '../../Utils/styles/connexionStyle'
-import { FormLabel } from '../../Utils/styles/connexionStyle'
-import { FormInput } from '../../Utils/styles/connexionStyle'
-import { FormButton } from '../../Utils/styles/connexionStyle'
+import {
+  PageSignup,
+  FormSignup,
+  FormLabel,
+  FormInput,
+  FormButton,
+  FormError,
+} from '../../Utils/styles/connexionStyle'
 
-import axios from 'axios'
+import AuthService from '../../services/auth_services'
+import { useNavigate } from 'react-router-dom'
 
 function Signup() {
+  let navigate = useNavigate()
   const [emailValue, setEmailValue] = useState('')
   const [passwordValue, setPasswordValue] = useState('')
-  console.log(emailValue)
-  console.log(passwordValue)
+
+  const [message, setMessage] = useState('')
+
   function submit(e) {
     e.preventDefault()
-    axios
-      .post('http://localhost:4200/auth/signup', {
-        email: emailValue,
-        password: passwordValue,
-      })
-      .then((res) => {
-        console.log(res)
-      })
+    AuthService.signup(emailValue, passwordValue).then(
+      () => {
+        navigate('/login')
+        alert('Utilisateur créé, merci de vous connecter')
+      },
+
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString()
+        setMessage(resMessage)
+      }
+    )
   }
 
   return (
@@ -42,9 +56,15 @@ function Signup() {
           value={passwordValue}
           onChange={(e) => setPasswordValue(e.target.value)}
         />
-        <FormButton type="submit" onClick={submit}>
+
+        <FormButton
+          disabled={!emailValue || !passwordValue ? true : false}
+          type="submit"
+          onClick={submit}
+        >
           S'INSCRIRE
         </FormButton>
+        <FormError>{message}</FormError>
       </FormSignup>
     </PageSignup>
   )

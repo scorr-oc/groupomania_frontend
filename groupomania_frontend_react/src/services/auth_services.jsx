@@ -2,38 +2,38 @@ import axios from 'axios'
 
 // AuthService () : requêtes HTTP gérant l'inscription et les données de connexion, gestion du token dans le localstorage
 
-const URL_API = 'http///localhost:4200/auth/'
-
 /* 
 login(): requête POST pour se connecter et sauvegarde le token dans le localStorage
 logout(): supprime le token du localStorage
 signup(): requête POST pour la création de l'user
 informationUser(): sauvergarde les informations de l'user
 */
+
 const login = (email, password) => {
   return axios
-    .post(URL_API + 'login', {
+    .post('http://localhost:4200/auth/login', {
       email,
       password,
     })
     .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem('user', JSON.stringify(response.data))
+      if (response.data.loggedIn && response.data.token) {
+        localStorage.setItem('loggedIn', true)
+        localStorage.setItem('token', response.data.token)
       }
       return response.data
     })
 }
 const logout = () => {
-  localStorage.removeItem('user')
+  localStorage.removeItem('token')
 }
 const signup = (email, password) => {
-  return axios.post(URL_API + 'signup', {
+  return axios.post('http://localhost:4200/auth/signup', {
     email,
     password,
   })
 }
 const informationUser = () => {
-  return JSON.parse(localStorage.getItem('user'))
+  return JSON.parse(localStorage.getItem('token'))
 }
 
 const AuthService = {

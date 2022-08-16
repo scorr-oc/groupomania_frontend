@@ -1,32 +1,47 @@
-import React from 'react'
-
-import { useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import AuthContext from '../../context/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import AuthService from '../../services/auth_services'
 
-import { PageSignup } from '../../Utils/styles/connexionStyle'
-import { FormSignup } from '../../Utils/styles/connexionStyle'
-import { FormLabel } from '../../Utils/styles/connexionStyle'
-import { FormInput } from '../../Utils/styles/connexionStyle'
-import { FormButton } from '../../Utils/styles/connexionStyle'
+import {
+  PageSignup,
+  FormSignup,
+  FormLabel,
+  FormInput,
+  FormButton,
+  FormError,
+} from '../../Utils/styles/connexionStyle'
 
 function Login() {
+  const { setAuth } = useContext(AuthContext)
   let navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [message, setMessage] = useState('')
 
   function submit(e) {
     e.preventDefault()
-    // axios
-    //   .post('http://localhost:4200/auth/login', {
-    //     email: emailValue,
-    //     password: passwordValue,
-    //   })
-    AuthService.login(email, password).then(() => {
-      navigate('/post')
-      window.location.reload()
-    })
+    AuthService.login(email, password)
+    .then(
+      () => {
+        navigate('/home')
+      },
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString()
+        setMessage(resMessage)
+      }
+    )
   }
+  useEffect(() => {
+    if (!localStorage.getItem('loggedIn')) {
+      localStorage.setItem('loggedIn', false)
+    }
+  }, [])
 
   return (
     <PageSignup>
@@ -50,6 +65,7 @@ function Login() {
         <FormButton type="submit" onClick={submit}>
           SE CONNECTER
         </FormButton>
+        <FormError>{message}</FormError>
       </FormSignup>
     </PageSignup>
   )
