@@ -15,21 +15,20 @@ function CreatePost() {
   let navigate = useNavigate()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [image, setImage] = useState('')
+  const [picture, setPicture] = useState(null)
+  const [filePicture, setFilePicture] = useState()
   const [message, setMessage] = useState('')
-  // const [postImage, setPostImage] = useState(null)
-  console.log(title)
-  console.log(description)
 
-  function submit(e) {
-    e.preventDefault()
-    axios
-      .post('http://localhost:4200/post', {
-        title,
-        description,
-        image,
-      })
-      .then(
+  const handlePost = (e) => {
+    if (title || description || picture) {
+      // on récupère les données à envoyer au back
+      const data = new FormData()
+      data.append('title', title)
+      data.append('description', description)
+      // on vérifie qu'il y ait bien une photo
+      if (filePicture) data.append('image', filePicture)
+
+      axios.post('http://localhost:4200/post', data).then(
         () => {
           navigate('/home')
         },
@@ -43,12 +42,26 @@ function CreatePost() {
           setMessage(resMessage)
         }
       )
+    } else {
+      alert('Veuillez rentrer un message')
+    }
   }
 
-  // const handlePicture = (e) => {
-  //   setPostImage(URL.createObjectURL(e.target.files[0]))
-  //   setImage(e.target.files[0])
+  // e.preventDefault()
+  // axios
+  //   .post('http://localhost:4200/post', {
+  //     title,
+  //     description,
+  //   })
+
   // }
+
+  const handlePicture = (e) => {
+    // on passe la photo dans picture pour pouvoir l'afficher
+    setPicture(URL.createObjectURL(e.target.files[0]))
+    // on récupère l'image pour l'envoyer dans la base de données
+    setFilePicture(e.target.files[0])
+  }
 
   return (
     <PagePost>
@@ -69,12 +82,12 @@ function CreatePost() {
         <InputPost
           type="file"
           id="file-upload"
-          name="file"
+          name="image"
           accept=".jpg, .jpeg, .png"
-          // onChange={(e) => handlePicture(e)}
+          onChange={(e) => handlePicture(e)}
         />
       </FormPost>
-      <PostButton type="submit" onClick={submit}>
+      <PostButton type="submit" onClick={handlePost}>
         PUBLIER
       </PostButton>
       <FormError>{message}</FormError>

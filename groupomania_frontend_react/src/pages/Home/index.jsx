@@ -38,7 +38,7 @@ function Home() {
             <HomeImage>image</HomeImage>
             <HomeContent>
               <HomeTitle>
-                {val.title} par {val.author}
+                {val.title} par {val.email}
               </HomeTitle>
               <HomeDescription>{val.description}</HomeDescription>
               {/* <FontAwesomeIcon icon="fa-thin fa-thumbs-up" />
